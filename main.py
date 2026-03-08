@@ -148,3 +148,42 @@ else:
             fig = px.pie(new_df, names=names_col, values=values_col,
                          title=f"{values_col} by {names_col}", template="plotly_white")
             st.plotly_chart(fig, use_container_width=True)
+
+# for extraction of data from csv or xlsx file in a range of values in a column.
+
+st.sidebar.header("Filter Data")
+
+numeric_cols = new_df.select_dtypes(include=['int64','float64']).columns
+
+column_to_filter = st.sidebar.selectbox("Select Numeric Column", numeric_cols)
+
+min_val = int(new_df[column_to_filter].min())
+max_val = int(new_df[column_to_filter].max())
+
+min_input = st.sidebar.number_input("Minimum Value", value=min_val)
+max_input = st.sidebar.number_input("Maximum Value", value=max_val)
+
+filtered_df = new_df[
+    (new_df[column_to_filter] >= min_input) &
+    (new_df[column_to_filter] <= max_input)
+]
+
+st.dataframe(filtered_df)
+
+
+# for downloading the chart as png file.
+
+if fig:
+    img_bytes = fig.to_image(format="png")  # import kaleido for this to work
+
+    st.download_button(
+        label="Download Chart as PNG",
+        data=img_bytes,
+        file_name="chart.png",
+        mime="image/png"
+    )
+
+
+# AI ASSISTANT
+
+
